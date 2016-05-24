@@ -32,6 +32,7 @@ extern "C" {
 #define CORRECT_RANGE_BIAS  (1)     // Compensate for small bias due to uneven accumulator growth at close up high power
 
 #define ANCTOANCTWR (0) //if set to 1 then anchor to anchor TWR will be done in the last slot
+#define REPORT_IMP (0)
 /******************************************************************************************************************
 *******************************************************************************************************************
 *******************************************************************************************************************/
