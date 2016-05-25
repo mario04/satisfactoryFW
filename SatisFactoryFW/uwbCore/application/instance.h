@@ -408,7 +408,7 @@ typedef struct
 
 	uint8 rxRespsIdx; //index into the array below (current tag (4bits)/seq number(4bits))
 	int8 rxResps[256];
-	int8 rxRep[256]; // additional
+	int8 rxRep[256];
 
 	int dwIDLE; //set to 1 when the RST goes high after wake up (it is set in process_dwRSTn_irq)
 
