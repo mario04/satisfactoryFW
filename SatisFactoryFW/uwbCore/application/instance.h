@@ -32,7 +32,7 @@ extern "C" {
 #define CORRECT_RANGE_BIAS  (1)     // Compensate for small bias due to uneven accumulator growth at close up high power
 
 #define ANCTOANCTWR (0) //if set to 1 then anchor to anchor TWR will be done in the last slot
-#define REPORT_IMP 	(0) //Report messages implementation. Tag will receive the TOF value from anchor in the same slot time.
+#define REPORT_IMP 	(1) //Report messages implementation. Tag will receive the TOF value from anchor in the same slot time.
 /******************************************************************************************************************
 *******************************************************************************************************************
 *******************************************************************************************************************/
@@ -348,6 +348,7 @@ typedef struct
 	uint8	wait4ack ;				// if this is set to DWT_RESPONSE_EXPECTED, then the receiver will turn on automatically after TX completion
 
     int8   responseTO ;
+    int8	reportTO;
 	uint8   instToSleep;			// if set the instance will go to sleep before sending the blink/poll message
 	uint8	stopTimer;				// stop/disable an active timer
     uint8	instanceTimerEn;		// enable/start a timer
@@ -407,6 +408,7 @@ typedef struct
 
 	uint8 rxRespsIdx; //index into the array below (current tag (4bits)/seq number(4bits))
 	int8 rxResps[256];
+	int8 rxRep[256];
 
 	int dwIDLE; //set to 1 when the RST goes high after wake up (it is set in process_dwRSTn_irq)
 
