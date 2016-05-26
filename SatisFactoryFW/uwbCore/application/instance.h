@@ -51,6 +51,7 @@ extern "C" {
 #define RTLS_DEMO_MSG_ANCH_RESP2            (0x72)          // Anchor response to poll from anchor
 #define RTLS_DEMO_MSG_ANCH_FINAL            (0x73)          // Anchor final massage back to Anchor
 #define RTLS_DEMO_MSG_TAG_FINAL             (0x82)          // Tag final massage back to Anchor
+#define RTLS_DEMO_MSG_ANCH_REPORT			(0x74)			// Anchor report message
 
 
 //lengths including the Decaranging Message Function Code byte
@@ -121,6 +122,7 @@ extern "C" {
 #define TOFR                                3				// ToF (n-1) 4 bytes
 #define TOFRN								7				// range number 1 byte
 #define POLL_RNUM                           1               // Poll message range number
+#define REPORT_RNUM							1
 
 //this it the delay used for configuring the receiver on delay (wait for response delay)
 //NOTE: this RX_RESPONSE_TURNAROUND is dependent on the microprocessor and code optimisations
@@ -359,6 +361,7 @@ typedef struct
 
 	uint8   rxResponseMaskAnc;
 	uint8   rxResponseMask;			// bit mask - bit 0 = received response from anchor ID = 0, bit 1 from anchor ID = 1 etc...
+	uint8 	rxReportMask;
 	uint8   rxResponseMaskReport;
 	uint8	rangeNum;				// incremented for each sequence of ranges (each slot)
 	uint8	rangeNumA[MAX_TAG_LIST_SIZE];				// array which holds last range number from each tag

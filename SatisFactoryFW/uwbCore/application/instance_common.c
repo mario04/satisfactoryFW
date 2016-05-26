@@ -668,7 +668,41 @@ uint8 tagrxreenable(uint16 sourceAddress)
 
 	return type_pend;
 }
+#if REPORT_IMP
+uint8 tagrxreenable2(uint16 sourceAddress)
+{
+	uint8 type_pend = DWT_SIG_DW_IDLE;
+	uint8 anc = sourceAddress & 0x3;
+	int instance = 0;
 
+	switch(anc)
+	{
+		//if we got Response from anchor 3 - this is the last expected response - send the final
+		case 3:
+			type_pend = DWT_SIG_DW_IDLE;
+			break;
+
+		//if we got Response from anchor 0, 1, or 2 - go back to wait for next anchor's response
+		case 0:
+		case 1:
+		case 2:
+		default:
+			if(instance_data[instance].reportTO > 0) //can get here as result of error frame so need to check
+			{
+				dwt_setrxtimeout((uint16)instance_data[instance].fwtoTime_sy * instance_data[instance].reportTO); //reconfigure the timeout
+				dwt_rxenable(DWT_START_RX_IMMEDIATE) ;
+				type_pend = DWT_SIG_RX_PENDING ;
+			}
+			else //last response was not received (got error/frame was corrupt)
+			{
+				type_pend = DWT_SIG_DW_IDLE; //report timeout - send the final
+			}
+			break;
+	}
+
+	return type_pend;
+}
+#endif
 /**
  * @brief function to re-enable the receiver and also adjust the timeout before sending the final message
  * if it is time so send the final message, the callback will notify the application, else the receiver is
@@ -1053,7 +1087,11 @@ void instance_rxcallback(const dwt_callback_data_t *rxd)
 				if(instance_data[instance].mode == TAG) //if tag got a good frame - this is probably a response, but could also be some other non-ranging frame
 					//(although due to frame filtering this is limited as non-addressed frames are filtered out)
 				{
+#if REPORT_IMP
+					instance_data[instance].reportTO--;		// got 1 more report message but if this is not a report message
+#endif
 					instance_data[instance].responseTO--; //got 1 more response or other RX frame - need to reduce timeout (for next response)
+
 				}
 
 				//check if this is a TWR message (and also which one)
@@ -1223,6 +1261,17 @@ void instance_rxcallback(const dwt_callback_data_t *rxd)
 
 					}
 					break;
+#if REPORT_IMP
+					case RTLS_DEMO_MSG_ANCH_REPORT:
+					{
+
+						instance_data[instance].rxRep[instance_data[instance].rangeNum]++;
+						dw_event.type_pend = tagrxreenable2(sourceAddress); //reportTO decremented above...
+						instance_data[instance].rxReportMask |= (0x1 << (sourceAddress & 0x3));
+
+					}
+					break;
+#endif
 
 					case RTLS_DEMO_MSG_TAG_FINAL:
 					case RTLS_DEMO_MSG_ANCH_FINAL:

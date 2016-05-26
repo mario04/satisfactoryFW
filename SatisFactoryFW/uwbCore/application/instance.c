@@ -414,8 +414,10 @@ int testapprun(instance_data_t *inst, int message)
               		inst->wait4ack = DWT_RESPONSE_EXPECTED; // Tag is waiting for report message.
               		inst->rxRep[inst->rangeNum] = 0; //reset the number of received reports
               		inst->reportTO = MAX_ANCHOR_LIST_SIZE; //expecting 4 report message
+              		dwt_setrxaftertxdelay((uint32)RX_RESPONSE1_TURNAROUND); // After this delay the first report message will be sent.
               		dwt_setrxtimeout((uint16)inst->fwtoTime_sy * MAX_ANCHOR_LIST_SIZE);  //configure the RX FWTO
-             		sprintf((char*)&dataseq2[0], "Preparing...\n ");
+              		inst->rxReportMask = 0;
+             		sprintf((char*)&dataseq2[0], "TAG preparation done\n ");
              		uartWriteLineNoOS((char *) dataseq2); //send some data
  #else
              		inst->instToSleep = TRUE;
@@ -469,7 +471,7 @@ int testapprun(instance_data_t *inst, int message)
 
 #if REPORT_IMP
                     	inst->testAppState = TA_RXE_WAIT;
-                    	sprintf((char*)&dataseq2[0], "Preparing...\n ");
+                    	sprintf((char*)&dataseq2[0], "TX confirmation...\n ");
                     	uartWriteLineNoOS((char *) dataseq2); //send some data
                     	break;
 #else
@@ -806,7 +808,11 @@ int testapprun(instance_data_t *inst, int message)
                             }
                             break; //RTLS_DEMO_MSG_ANCH_RESP
 
-
+                            case RTLS_DEMO_MSG_ANCH_REPORT:
+                            {
+                            	uint8 currentRangeNum = (messageData[REPORT_RNUM] + 1);
+                            }
+                            break;
                             case RTLS_DEMO_MSG_ANCH_FINAL:
                             case RTLS_DEMO_MSG_TAG_FINAL:
                             {
