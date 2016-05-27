@@ -56,6 +56,7 @@ extern "C" {
 
 //lengths including the Decaranging Message Function Code byte
 #define TAG_POLL_MSG_LEN                    2				// FunctionCode(1), Range Num (1)
+#define ANCH_REPORT_MSG_LEN					6				// FunctionCode(1), Range Num (2), TOF_time (4)
 #define ANCH_RESPONSE_MSG_LEN               8               // FunctionCode(1), Sleep Correction Time (2), Measured_TOF_Time(4), Range Num (1) (previous)
 #define TAG_FINAL_MSG_LEN                   33              // FunctionCode(1), Range Num (1), Poll_TxTime(5),
 															// Resp0_RxTime(5), Resp1_RxTime(5), Resp2_RxTime(5), Resp3_RxTime(5), Final_TxTime(5), Valid Response Mask (1)
@@ -167,8 +168,8 @@ typedef enum inst_states
     TA_SLEEP_DONE,               //9
     TA_TXRESPONSE_SENT_POLLRX,    //10
     TA_TXRESPONSE_SENT_RESPRX,    //11
-    TA_TXRESPONSE_SENT_TORX		  //12
-
+    TA_TXRESPONSE_SENT_TORX,		  //12
+	TA_TXREPORT_WAIT_SEND
 } INST_STATES;
 
 

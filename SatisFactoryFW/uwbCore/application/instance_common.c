@@ -1281,6 +1281,8 @@ void instance_rxcallback(const dwt_callback_data_t *rxd)
 
 					case RTLS_DEMO_MSG_TAG_FINAL:
 					case RTLS_DEMO_MSG_ANCH_FINAL:
+					{
+
 						if(instance_data[instance].mode == TAG) //tag should ignore any other Final from anchors
 						{
 							instance_data[instance].responseTO++; //as will be decremented in the function and was also decremented above
@@ -1289,7 +1291,14 @@ void instance_rxcallback(const dwt_callback_data_t *rxd)
 							instance_data[instance].rxMsgCount++;
 							return;
 						}
-					//if anchor fall into case below and process the frame
+#if REPORT_IMP
+						uint8 *frame = &dw_event.msgu.frame[0];
+						memcpy(&instance_data[instance].msg_f.destAddr[0], &frame[srcAddr_index], ADDR_BYTE_SIZE_S);
+						instance_data[instance].delayedReplyTime = dw_event.timeStamp32h;
+						dw_event.type_pend = DWT_SIG_DW_IDLE;
+#endif					//if anchor fall into case below and process the frame
+					}
+					break;
 					default:  //process rx frame
 					{
 						dw_event.type_pend = DWT_SIG_DW_IDLE;
