@@ -123,6 +123,7 @@ extern "C" {
 #define TOFRN								7				// range number 1 byte
 #define POLL_RNUM                           1               // Poll message range number
 #define REPORT_RNUM							1
+#define TOFREP								2
 
 //this it the delay used for configuring the receiver on delay (wait for response delay)
 //NOTE: this RX_RESPONSE_TURNAROUND is dependent on the microprocessor and code optimisations

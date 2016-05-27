@@ -275,9 +275,15 @@ int instance_init(void)
     instance_data[instance].lateRX = 0;
 
     instance_data[instance].responseTO = -1; //initialise
+#if REPORT_IMP
+    instance_data[instance].reportTO = -1;
+#endif
     for(i=0; i<256; i++)
     {
     	instance_data[instance].rxResps[i] = -10;
+#if REPORT_IMP
+    	instance_data[instance].rxRep[i] = -10;
+#endif
     }
 
     instance_data[instance].delayedReplyTime = 0;

@@ -803,16 +803,55 @@ int testapprun(instance_data_t *inst, int message)
 											memcpy(&inst->tofArrayAnc[(srcAddr[0]+dstAddr[0])&0x3], &(messageData[TOFR]), 4);
 										}
 									}
+
 								}
 
                             }
                             break; //RTLS_DEMO_MSG_ANCH_RESP
-
+#if REPORT_IMP
                             case RTLS_DEMO_MSG_ANCH_REPORT:
                             {
                             	uint8 currentRangeNum = (messageData[REPORT_RNUM] + 1);
+                            	if(currentRangeNum == inst->rangeNum) //these are the previous ranges...
+								{
+									//copy the ToF and put into array (array holds last 4 ToFs)
+									memcpy(&inst->tofArray[(srcAddr[0]&0x3)], &(messageData[TOFREP]), 4);
+
+									//check if the ToF is valid, this makes sure we only report valid ToFs
+									//e.g. consider the case of reception of response from anchor a1 (we are anchor a2)
+									//if a1 got a Poll with previous Range number but got no Final, then the response will have
+									//the correct range number but the range will be INVALID_TOF
+									if(inst->tofArray[(srcAddr[0]&0x3)] != INVALID_TOF)
+									{
+										inst->rxReportMask |= (0x1 << (srcAddr[0]&0x3));
+									}
+
+								}
+								else
+								{
+									if(inst->tofArray[(srcAddr[0]&0x3)] != INVALID_TOF)
+									{
+										inst->tofArray[(srcAddr[0]&0x3)] = INVALID_TOF;
+									}
+								}
+                            	if(dw_event->type_pend == DWT_SIG_RX_PENDING)
+								{
+
+									// stay in TA_RX_WAIT_DATA - receiver is already enabled.
+								}
+								//DW1000 idle - all the reports are received
+								else //if(dw_event->type_pend == DWT_SIG_DW_IDLE)
+								{
+									/* Here is missing the report of the tofs values */
+									inst->testAppState = TA_TXE_WAIT ; //go to TA_TXE_WAIT first to check if it's sleep time
+									inst->nextState = TA_TXPOLL_WAIT_SEND ;
+									inst->instToSleep = TRUE;
+
+								}
+
                             }
                             break;
+#endif
                             case RTLS_DEMO_MSG_ANCH_FINAL:
                             case RTLS_DEMO_MSG_TAG_FINAL:
                             {
