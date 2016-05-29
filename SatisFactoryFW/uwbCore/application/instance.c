@@ -543,7 +543,7 @@ int testapprun(instance_data_t *inst, int message)
                     }
                     else
                     {
-                    	//instance_backtoanchor(inst);
+                    	instance_backtoanchor(inst);
 					}
                 }
                 else if (inst->gotTO == 1) //timeout
