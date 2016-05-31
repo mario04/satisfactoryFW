@@ -28,6 +28,7 @@ double inst_tdist[MAX_TAG_LIST_SIZE] ;
 double inst_idist[MAX_ANCHOR_LIST_SIZE] ;
 double inst_idistraw[MAX_ANCHOR_LIST_SIZE] ;
 instance_data_t instance_data[NUM_INST] ;
+uint8 dataseq3[100];
 
 void ancprepareresponse(uint16 sourceAddress, uint8 srcAddr_index, uint8 fcode_index, uint8 *frame, uint32 uTimeStamp);
 void ancprepareresponse2(uint16 sourceAddress, uint8 srcAddr_index, uint8 fcode_index, uint8 *frame);
@@ -1086,6 +1087,7 @@ void instance_rxcallback(const dwt_callback_data_t *rxd)
 		//if Listener then just report the received frame to the instance (application)
 		if(rxd_event == DWT_SIG_RX_OKAY) //Process good/known frame types
 		{
+
 			uint16 sourceAddress = (((uint16)dw_event.msgu.frame[srcAddr_index+1]) << 8) + dw_event.msgu.frame[srcAddr_index];
 
 			if(instance_data[instance].mode != LISTENER)
@@ -1270,7 +1272,8 @@ void instance_rxcallback(const dwt_callback_data_t *rxd)
 #if REPORT_IMP
 					case RTLS_DEMO_MSG_ANCH_REPORT:
 					{
-
+						sprintf((char*)&dataseq3[0], "report ...\n ");
+						uartWriteLineNoOS((char *) dataseq3); //send some data
 						instance_data[instance].rxRep[instance_data[instance].rangeNum]++;
 						dw_event.type_pend = tagrxreenable2(sourceAddress); //reportTO decremented above...
 						instance_data[instance].rxReportMask |= (0x1 << (sourceAddress & 0x3));
