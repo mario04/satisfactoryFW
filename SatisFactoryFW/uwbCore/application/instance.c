@@ -411,14 +411,14 @@ int testapprun(instance_data_t *inst, int message)
             	{
 #if REPORT_IMP
               		inst->instToSleep = FALSE ; // The ranging do not finish here.
-              		inst->wait4ack = DWT_RESPONSE_EXPECTED; // Tag is waiting for report message.
+              		inst->wait4ack = 0;
               		inst->rxRep[inst->rangeNum] = 0; //reset the number of received reports
               		inst->reportTO = MAX_ANCHOR_LIST_SIZE; //expecting 4 report message
-              		dwt_setrxaftertxdelay((uint32)RX_RESPONSE1_TURNAROUND); // After this delay the first report message will be sent.
-              		dwt_setrxtimeout((uint16)inst->fwtoTime_sy * MAX_ANCHOR_LIST_SIZE);  //configure the RX FWTO
+//              	dwt_setrxaftertxdelay((uint32)RX_RESPONSE1_TURNAROUND); // After this delay the first report message will be sent.
+   //           		dwt_setrxtimeout((uint16)inst->fwtoTime_sy * MAX_ANCHOR_LIST_SIZE);  //configure the RX FWTO
               		inst->rxReportMask = 0;
-             		sprintf((char*)&dataseq2[0], "TAG preparation done\n ");
-             		uartWriteLineNoOS((char *) dataseq2); //send some data
+//             		sprintf((char*)&dataseq2[0], "Final sent, preparation to receive report\n ");
+//             		uartWriteLineNoOS((char *) dataseq2); //send some data
  #else
              		inst->instToSleep = TRUE;
  #endif
@@ -530,8 +530,8 @@ int testapprun(instance_data_t *inst, int message)
 
 #if REPORT_IMP
                     	inst->testAppState = TA_RXE_WAIT;
-                    	sprintf((char*)&dataseq2[0], "TX confirmation...\n ");
-                    	uartWriteLineNoOS((char *) dataseq2); //send some data
+//                    	sprintf((char*)&dataseq2[0], "TX confirmation of final...\n ");
+//                    	uartWriteLineNoOS((char *) dataseq2); //send some data
                     	break;
 #else
                     	inst->testAppState = TA_TXE_WAIT ;
@@ -652,6 +652,8 @@ int testapprun(instance_data_t *inst, int message)
 				//if we have received a DWT_SIG_RX_OKAY event - this means that the message is IEEE data type - need to check frame control to know which addressing mode is used
                 case DWT_SIG_RX_OKAY :
                 {
+
+
 					event_data_t* dw_event = instance_getevent(15); //get and clear this event
 					uint8  srcAddr[8] = {0,0,0,0,0,0,0,0};
 					uint8  dstAddr[8] = {0,0,0,0,0,0,0,0};
@@ -767,6 +769,8 @@ int testapprun(instance_data_t *inst, int message)
                             case RTLS_DEMO_MSG_ANCH_RESP2:
                             case RTLS_DEMO_MSG_ANCH_RESP:
                             {
+                            	sprintf((char*)&dataseq2[0], "b\n ");
+                            	                						uartWriteLineNoOS((char *) dataseq2); //send some data
                             	uint8 currentRangeNum = (messageData[TOFRN] + 1); //current = previous + 1
 
                             	if(GATEWAY_ANCHOR_ADDR == (srcAddr[0] | ((uint32)(srcAddr[1] << 8)))) //if response from gateway then use the correction factor
@@ -879,6 +883,8 @@ int testapprun(instance_data_t *inst, int message)
                             break; //RTLS_DEMO_MSG_ANCH_RESP
 #if REPORT_IMP
                             case RTLS_DEMO_MSG_ANCH_REPORT:
+                            	sprintf((char*)&dataseq2[0], "ehh...\n ");
+                            						uartWriteLineNoOS((char *) dataseq2); //send some data
                             {
                             	uint8 currentRangeNum = (messageData[REPORT_RNUM] + 1);
                             	if(currentRangeNum == inst->rangeNum) //these are the previous ranges...
@@ -978,7 +984,7 @@ int testapprun(instance_data_t *inst, int message)
 									printf("FinalRx Timestamp: %4.15e\n", convertdevicetimetosecu(dw_event.timeStamp));
 #endif
 */
-									inst->delayedReplyTime = 0 ;
+									//inst->delayedReplyTime = 0 ;
 
 									// times measured at Tag extracted from the message buffer
 									// extract 40bit times
