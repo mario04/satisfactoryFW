@@ -1050,9 +1050,11 @@ int testapprun(instance_data_t *inst, int message)
 
 								instancesetantennadelays(); //this will update the antenna delay if it has changed
 					            instancesettxpower(); // configure TX power if it has changed
-
+#if REPORT_IMP
 					            inst->testAppState = TA_TXREPORT_WAIT_SEND ;              // wait for next frame
-
+#else
+					            inst->testAppState = TA_RXE_WAIT;
+#endif
                             }
                             break; //RTLS_DEMO_MSG_TAG_FINAL
 
