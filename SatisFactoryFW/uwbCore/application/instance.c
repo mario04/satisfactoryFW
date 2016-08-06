@@ -769,8 +769,7 @@ int testapprun(instance_data_t *inst, int message)
                             case RTLS_DEMO_MSG_ANCH_RESP2:
                             case RTLS_DEMO_MSG_ANCH_RESP:
                             {
-                            	sprintf((char*)&dataseq2[0], "b\n ");
-                            	                						uartWriteLineNoOS((char *) dataseq2); //send some data
+
                             	uint8 currentRangeNum = (messageData[TOFRN] + 1); //current = previous + 1
 
                             	if(GATEWAY_ANCHOR_ADDR == (srcAddr[0] | ((uint32)(srcAddr[1] << 8)))) //if response from gateway then use the correction factor
@@ -984,7 +983,9 @@ int testapprun(instance_data_t *inst, int message)
 									printf("FinalRx Timestamp: %4.15e\n", convertdevicetimetosecu(dw_event.timeStamp));
 #endif
 */
-									//inst->delayedReplyTime = 0 ;
+#if (REPORT_IMP == 0)
+									inst->delayedReplyTime = 0 ;
+#endif
 
 									// times measured at Tag extracted from the message buffer
 									// extract 40bit times

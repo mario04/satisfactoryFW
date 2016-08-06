@@ -1191,8 +1191,7 @@ void instance_rxcallback(const dwt_callback_data_t *rxd)
 					case RTLS_DEMO_MSG_ANCH_RESP:
 					case RTLS_DEMO_MSG_ANCH_RESP2:
 					{
-						sprintf((char*)&dataseq3[0], "bc\n ");
-						    						uartWriteLineNoOS((char *) dataseq3); //send some data
+
 						//we are a tag
 					    if(instance_data[instance].mode == TAG)
 					    {
